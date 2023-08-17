@@ -1,6 +1,8 @@
 const Whisper = require('whisper-nodejs');
 const mic = require('mic'); // Örnek bir mikrofon kütüphanesi, kullanacağınız mikrofon kütüphanesine göre değişebilir
 
+console.log("Running service.js")
+
 const whisper = new Whisper('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');
 const micInstance = mic({
     rate: '16000',
