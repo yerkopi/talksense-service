@@ -7,7 +7,7 @@ const whisper = new Whisper('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
 const micInstance = mic({
     rate: '16000',
     channels: '1',
-    device: 'plughw:0',
+    hw: 'CARD=USBZH11SENC',
     debug: true
 })
 
