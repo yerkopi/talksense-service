@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "mic": "^2.1.2",
+    "whisper-node": "^0.2.12",
     "whisper-nodejs": "^1.0.0"
   }
 }
