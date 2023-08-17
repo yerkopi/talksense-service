@@ -20,7 +20,7 @@ const openai = new OpenAI({
     apiKey: "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"
 })
 
-proc.setFfmpegPath("/usr/bin/ffmpeg")
+ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
 // Record audio
 function recordAudio(filename) {
