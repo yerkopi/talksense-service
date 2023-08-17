@@ -2,7 +2,6 @@ const fs = require("fs")
 const ffmpeg = require("fluent-ffmpeg")
 const mic = require("mic")
 const { Readable } = require("stream")
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path
 const { Configuration, OpenAIApi } = require("openai");
 
 console.log("Running service.js...")
@@ -22,7 +21,7 @@ const configuration = new Configuration({
 })
 
 const openai = new OpenAIApi(configuration)
-ffmpeg.setFfmpegPath(ffmpegPath);
+proc.setFfmpegPath("/usr/bin/ffmpeg")
 
 // Record audio
 function recordAudio(filename) {
