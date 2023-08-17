@@ -8,7 +8,7 @@ const micInstance = mic({
     rate: '16000',
     channels: '1',
     hw: '0,0',
-    plughw:'1,0',
+    device:'hw:0,0',
     debug: true
 })
 
