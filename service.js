@@ -43,12 +43,11 @@ function recordAudio(filename) {
 
     micInstance.start()
 
-    process.on("SIGINT", () => {
-      micInstance.stop()
-      console.log("Finished recording")
-      resolve()
-    })
-
+    setTimeout(() => {
+        micInstance.stop()
+        resolve()
+    }, 5000)
+    
     micInputStream.on("error", (err) => {
       reject(err)
     })
@@ -64,10 +63,12 @@ async function transcribeAudio(filename) {
 }
 
 async function main() {
-  const audioFilename = "recorded_audio.wav"
-  await recordAudio(audioFilename)
-  const transcription = await transcribeAudio(audioFilename)
-  console.log("Transcription:", transcription)
+    while (true) {
+        const audioFilename = "recorded_audio.wav"
+        await recordAudio(audioFilename)
+        const transcription = await transcribeAudio(audioFilename)
+        console.log("Transcription:", transcription)
+    }
 }
 
 main()
