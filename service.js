@@ -1,6 +1,7 @@
 const fs = require("fs")
 const ffmpeg = require("fluent-ffmpeg")
 const mic = require("mic")
+const dotenv = require('dotenv')
 const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 
@@ -17,7 +18,7 @@ const micInstance = mic({
 const micInputStream = micInstance.getAudioStream()
 
 const config = new Configuration({
-    apiKey: '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'
+    apiKey: dotenv.config().parsed.OPENAI_API_KEY
 })
 const openai = new OpenAIApi(config)
 
