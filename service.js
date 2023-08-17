@@ -17,7 +17,7 @@ const micInstance = mic({
 const micInputStream = micInstance.getAudioStream()
 
 const config = new Configuration({
-    apiKey: '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'
+    apiKey: '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'
 })
 const openai = new OpenAIApi(config)
 
