@@ -7,7 +7,7 @@ source "$DIR/../.env"
 git config --global --add safe.directory "$SERVICE_DIR"
 
 sudo systemctl disable "$SERVICE_NAME"
-systemctl stop "$SERVICE_NAME"
+sudo systemctl stop "$SERVICE_NAME"
 
 sudo cp -f "$SERVICE_DIR/$SERVICE_NAME" "/lib/systemd/system/$SERVICE_NAME"
 
