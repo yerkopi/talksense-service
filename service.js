@@ -67,7 +67,11 @@ async function main() {
         const audioFilename = "recorded_audio.wav"
         await recordAudio(audioFilename)
         const transcription = await transcribeAudio(audioFilename)
-        console.log("Transcription:", transcription)
+        
+        if (transcription.search("ışıkları kapat")) 
+            console.log("closing lights")
+        else
+            console.log("unknown command")
     }
 }
 
