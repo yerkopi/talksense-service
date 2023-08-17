@@ -1,5 +1,9 @@
-const mic = require('mic')
-const openai = require('openai')
+const fs = require("fs")
+const ffmpeg = require("fluent-ffmpeg")
+const mic = require("mic")
+const { Readable } = require("stream")
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path
+const { Configuration, OpenAIApi } = require("openai");
 
 console.log("Running service.js...")
 
@@ -13,31 +17,59 @@ const micInstance = mic({
 
 const micInputStream = micInstance.getAudioStream()
 
-const openaiApiKey = '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'; 
-
-micInputStream.on('data', function(data) {
-    openai.apiKey = openaiApiKey;
-    
-    openai.Completion.create({
-        engine: 'davinci',
-        prompt: 'Convert the following audio to text: ' + data.toString('base64'),
-        max_tokens: 100
-    })
-    .then(response => {
-        const text = response.choices[0].text.trim();
-        console.log('Transcription:', text)
-    })
-    .catch(error => {
-        console.error('Error:', error)
-    })
+const configuration = new Configuration({
+    apiKey: "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"
 })
 
-micInputStream.on('error', function(err) {
-    console.error('Mic Error:', err)
-})
+const openai = new OpenAIApi(configuration)
+ffmpeg.setFfmpegPath(ffmpegPath);
 
-micInstance.start()
+// Record audio
+function recordAudio(filename) {
+  return new Promise((resolve, reject) => {
+    const micInstance = mic({
+      rate: "16000",
+      channels: "1",
+      fileType: "wav",
+    });
 
-process.on('SIGINT', function() {
-    micInstance.stop()
-})
+    const micInputStream = micInstance.getAudioStream();
+    const output = fs.createWriteStream(filename);
+    const writable = new Readable().wrap(micInputStream);
+
+    console.log("Recording... Press Ctrl+C to stop.");
+
+    writable.pipe(output);
+
+    micInstance.start();
+
+    process.on("SIGINT", () => {
+      micInstance.stop();
+      console.log("Finished recording");
+      resolve();
+    });
+
+    micInputStream.on("error", (err) => {
+      reject(err);
+    });
+  });
+}
+
+// Transcribe audio
+async function transcribeAudio(filename) {
+  const transcript = await openai.createTranscription(
+    fs.createReadStream(filename),
+    "whisper-1"
+  );
+  return transcript.data.text;
+}
+
+// Main function
+async function main() {
+  const audioFilename = "recorded_audio.wav";
+  await recordAudio(audioFilename);
+  const transcription = await transcribeAudio(audioFilename);
+  console.log("Transcription:", transcription);
+}
+
+main();
