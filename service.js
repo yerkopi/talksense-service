@@ -16,11 +16,10 @@ const micInstance = mic({
 
 const micInputStream = micInstance.getAudioStream()
 
-const configuration = new Configuration({
+const openai = new OpenAI({
     apiKey: "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"
 })
 
-const openai = new OpenAIApi(configuration)
 proc.setFfmpegPath("/usr/bin/ffmpeg")
 
 // Record audio
