@@ -2,7 +2,7 @@ const fs = require("fs")
 const ffmpeg = require("fluent-ffmpeg")
 const mic = require("mic")
 const { Readable } = require("stream")
-const { Configuration, OpenAIApi } = require("openai");
+const { OpenAI } = require("openai");
 
 console.log("Running service.js...")
 
