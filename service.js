@@ -7,8 +7,9 @@ const whisper = new Whisper('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
 const micInstance = mic({
     rate: '16000',
     channels: '1',
-    debug: false
-});
+    debug: true
+})
+
 const micInputStream = micInstance.getAudioStream()
 
 // Mikrofonu dinlemeye başla
