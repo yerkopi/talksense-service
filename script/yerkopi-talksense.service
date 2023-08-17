@@ -1,0 +1,15 @@
+[Unit]
+Description=yerkopi-talksense-service
+After=network.target
+
+[Service]
+User=root
+Environment="PATH=/home/yerkopi/talksense-service:/usr/bin:/usr/local/bin"
+WorkingDirectory=/home/yerkopi/talksense-service
+ExecStartPre=/usr/bin/bash script/update.sh
+ExecStart=node service.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
