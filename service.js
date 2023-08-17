@@ -29,6 +29,7 @@ function recordAudio(filename) {
       rate: "16000",
       channels: "1",
       fileType: "wav",
+      device: 'hw:USBZH11SENC,0'
     });
 
     const micInputStream = micInstance.getAudioStream();
@@ -39,7 +40,7 @@ function recordAudio(filename) {
 
     writable.pipe(output);
 
-    micInstance.start();
+    micInstance.start()
 
     process.on("SIGINT", () => {
       micInstance.stop();
