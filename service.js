@@ -1,4 +1,3 @@
-const { AbortController } = require('abort-controller')
 const mic = require('mic')
 const openai = require('openai')
 
