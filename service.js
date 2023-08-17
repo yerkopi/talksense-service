@@ -2,7 +2,7 @@ const fs = require("fs")
 const ffmpeg = require("fluent-ffmpeg")
 const mic = require("mic")
 const { Readable } = require("stream")
-const { OpenAIApi } = require("openai");
+const { Configuration, OpenAIApi } = require("openai");
 
 console.log("Running service.js...")
 
@@ -16,9 +16,10 @@ const micInstance = mic({
 
 const micInputStream = micInstance.getAudioStream()
 
-const openai = new OpenAIApi({
-    apiKey: "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"
+const config = new Configuration({
+    apiKey: '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'
 })
+const openai = new OpenAIApi(config)
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
