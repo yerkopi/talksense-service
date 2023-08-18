@@ -6,7 +6,7 @@ const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 const googleTTS = require("google-tts-api")
-let mpv = require('node-mpv')
+const spawn = require("child_process").spawn
 
 const audioFileName = "prompt.wav"
 
@@ -26,7 +26,6 @@ const config = new Configuration({
   apiKey: dotenv.config().parsed.OPENAI_API_KEY
 })
 
-let mpvPlayer = new mpv({}, ['--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo'])
 const openai = new OpenAIApi(config)
 const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
@@ -73,7 +72,7 @@ function recordAudio(filename) {
                     host: 'https://translate.google.com',
                   })
 
-                  mpvPlayer.load(url)
+                  spawn('mpv', [url, '--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo', '--no-video', '--volume=100'], {})
 
                   micInstance.stop()
                   resolve()
