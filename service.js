@@ -120,7 +120,7 @@ async function main() {
         }
       },
       {
-        "name": "şarkı söyle",
+        "name": "bülbül gibi öt",
         "cb": async (transcription) => {
 
           const completion = await openai.createChatCompletion({
