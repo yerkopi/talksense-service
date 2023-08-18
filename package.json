@@ -4,7 +4,6 @@
     "fluent-ffmpeg": "^2.1.2",
     "google-tts-api": "^2.0.2",
     "mic": "^2.1.2",
-    "node-mpv": "^1.5.0",
     "node-vad": "^1.1.4",
     "openai": "^3.2.1"
   }

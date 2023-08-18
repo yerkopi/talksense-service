@@ -66,14 +66,6 @@ function recordAudio(filename) {
               setTimeout(() => {
                 listening = !listening
                 if (!listening) {
-                  const url = googleTTS.getAudioUrl('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?', {
-                    lang: 'tr',
-                    slow: false,
-                    host: 'https://translate.google.com',
-                  })
-
-                  spawn('mpv', [url, '--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo', '--no-video', '--volume=100'], {})
-
                   micInstance.stop()
                   resolve()
                 }
@@ -116,7 +108,15 @@ async function main() {
       const knownCommands = [{
         "name": "ışıkları kapat",
         "cb": (transcription) => {
-          console.log("ışıklar kapatılıyor!")
+          const url = googleTTS.getAudioUrl('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?', {
+            lang: 'tr',
+            slow: false,
+            host: 'https://translate.google.com',
+          })
+
+          const response = "Işıklar kapatılıyor!"
+          spawn('mpv', [url, '--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo', '--no-video', '--volume=100'], {})
+          console.log(response)
         }
       }
     ]
