@@ -89,7 +89,7 @@ setInterval(() => {
   try {
     const fileSizeInBytes = fs.statSync(audioFileName).size
     if (fileSizeInBytes > 1000000) {
-      fs.unlinkSync(audioFileName)
+      fs.truncateSync(audioFileName, 0)
       console.log("File size is too big, deleting...")
     }
   } catch (err) {
