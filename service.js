@@ -81,6 +81,7 @@ async function transcribeAudio(filename) {
 
 async function main() {
     while (true) {
+      try {
         const audioFilename = "recorded_audio.wav"
         await recordAudio(audioFilename)
         const transcription = await transcribeAudio(audioFilename)
@@ -89,6 +90,9 @@ async function main() {
             console.log("closing lights")
         else
             console.log("unknown command")
+      } catch {
+
+      }
     }
 }
 
