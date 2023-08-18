@@ -41,8 +41,9 @@ function recordAudio(filename) {
     })
 
     const fileSizeInBytes = fs.statSync(filename).size
-    if (fileSizeInBytes > 1000000)
-      fs.unlinkSync(filename)
+    if (fileSizeInBytes > 1000000) {
+      console.log("File size is too big, deleting...")
+    }
 
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
