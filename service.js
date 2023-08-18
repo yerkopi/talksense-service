@@ -60,10 +60,10 @@ function recordAudio(filename) {
           case VAD.Event.SILENCE:
             break;
           case VAD.Event.VOICE:
+            writable.pipe(output)
             setTimeout(() => {
               micInstance.stop()
               fs.unlinkSync(filename)
-              writable.pipe(output)
               resolve()
             }, 2000)
             break;
