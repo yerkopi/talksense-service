@@ -64,6 +64,7 @@ function recordAudio(filename) {
           case VAD.Event.VOICE:
             setTimeout(() => {
               micInstance.stop()
+              fs.unlinkSync(audioFileName)
               resolve()
             }, 2000)
             break;
@@ -155,8 +156,6 @@ async function main() {
         spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
-
-      fs.unlinkSync(audioFileName)
 
     } catch (err) {
       console.error(err)
