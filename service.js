@@ -29,21 +29,23 @@ ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 function recordAudio(filename) {
   return new Promise((resolve, reject) => {
     const micInstance = mic({
-      rate: "16000",
-      channels: "1",
+      rate: dotenv.config().parsed.MIC_RATE,
+      channels: dotenv.config().parsed.MIC_CHANNELS,
       fileType: "wav",
-      device: 'hw:USBZH11SENC,0'
+      device: dotenv.config().parsed.MIC_DEVICE
     })
 
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
     const writable = new Readable().wrap(micInputStream)
 
-    console.log("Recording... Press Ctrl+C to stop.")
+    console.log("Listening...")
 
     writable.pipe(output)
 
     micInstance.start()
+
+    let listening = false
 
     micInputStream.on("data", (data) => {
       vad.processAudio(data, 16000).then(res => {
@@ -55,13 +57,18 @@ function recordAudio(filename) {
             console.log("NOISE")
             break;
           case VAD.Event.SILENCE:
+            if (listening) {
+              setTimeout(() => {
+                listening = !listening
+                if (!listening)
+                  micInstance.stop()
+                  resolve()
+              }, 1000)
+            }
             return
           case VAD.Event.VOICE:
-            console.log("VOICE")
-            setTimeout(() => {
-              micInstance.stop()
-              resolve()
-            }, 1000)
+            if (!listening)
+              listening = !listening
             break;
         }
       }).catch(console.error)
@@ -84,24 +91,27 @@ async function transcribeAudio(filename) {
 async function main() {
   while (true) {
     try {
-      const audioFilename = "recorded_audio.wav"
-      await recordAudio(audioFilename)
-      const transcription = await transcribeAudio(audioFilename)
-      
-      const knownCommands = ["ışıkları kapat"]
+      await recordAudio("prompt.wav")
+      transcription = await transcribeAudio(audioFilename)
+      transcription = transcription.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+      transcription = transcription.replace(/[^a-zşçğüöı ]/g, "")
+      transcription = transcription.toLowerCase()
+
+      console.log(`Transcription: ${transcription}`)
+
+      const knownCommands = [{
+        "name": "ışıkları kapat",
+        "cb": (transcription) => {
+          console.log("ışıklar kapatılıyor!")
+        }
+      }
+    ]
 
       for (const command of knownCommands) {
-        const completion = await openai.createChatCompletion({
-          model: "gpt-3.5-turbo",
-          messages: [{role: "user", content: `is this ${transcription} command meant to ${command} ? if so, answer just "yes". if not, answer "no". Dont answer anything else.`}]
-        });
-        
-        if (completion.data.choices[0].message.content === "yes") {
-          console.log("Command recognized!")
+        if (transcription.includes(command.name)) {
+          command.cb(transcription)
           break
         }
-        else
-          console.log(`${transcription} is not a known command.`)
       }
     } catch (err) {
       console.error(err)
