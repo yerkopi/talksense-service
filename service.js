@@ -118,6 +118,28 @@ async function main() {
           spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
           console.log(response)
         }
+      },
+      {
+        "name": "fıkra anlat",
+        "cb": async (transcription) => {
+
+          const completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{role: "user", content: transcription}],
+          }).then((res) => {
+
+            const response = res.data.choices[0].message.content
+            const url = googleTTS.getAudioUrl(response, {
+              lang: 'tr',
+              slow: false,
+              host: 'https://translate.google.com',
+            })
+  
+            spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
+
+            console.log(response)
+          }).catch(console.error)
+        }
       }
     ]
 
