@@ -71,8 +71,9 @@ function recordAudio(filename) {
                     lang: 'tr',
                     slow: false,
                     host: 'https://translate.google.com',
-                  }).then(url => mpvPlayer.load(url))
-                  
+                  })
+                  mpvPlayer.load(url)
+
                   micInstance.stop()
                   resolve()
                 }
