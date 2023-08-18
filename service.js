@@ -50,8 +50,6 @@ function recordAudio(filename) {
 
     micInstance.start()
 
-    let listening = false
-
     micInputStream.on("data", (data) => {
       vad.processAudio(data, 16000).then(res => {
         switch (res) {
@@ -62,19 +60,12 @@ function recordAudio(filename) {
             console.log("NOISE")
             break;
           case VAD.Event.SILENCE:
-            if (listening) {
-              setTimeout(() => {
-                if (listening) {
-                  micInstance.stop()
-                  listening = !listening
-                  resolve()
-                }
-              }, 1000)
-            }
-            return
+            break;
           case VAD.Event.VOICE:
-            if (!listening)
-              listening = !listening
+            setTimeout(() => {
+              micInstance.stop()
+              resolve()
+            }, 1000)
             break;
         }
       }).catch(console.error)
