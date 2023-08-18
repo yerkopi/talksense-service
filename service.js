@@ -26,7 +26,7 @@ const config = new Configuration({
   apiKey: dotenv.config().parsed.OPENAI_API_KEY
 })
 
-let mpvPlayer = new mpv()
+let mpvPlayer = new mpv('--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo')
 const openai = new OpenAIApi(config)
 const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
@@ -72,6 +72,7 @@ function recordAudio(filename) {
                     slow: false,
                     host: 'https://translate.google.com',
                   })
+
                   mpvPlayer.load(url)
 
                   micInstance.stop()
