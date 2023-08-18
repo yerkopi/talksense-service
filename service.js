@@ -24,6 +24,18 @@ const openai = new OpenAIApi(config)
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
+function calculateRMS(data) {
+  let sum = 0
+  
+  for (let i = 0; i < data.length; i++)
+    sum += data[i] * data[i]
+
+  const mean = sum / data.length
+  const rms = Math.sqrt(mean)
+
+  return rms
+}
+
 function recordAudio(filename) {
   return new Promise((resolve, reject) => {
     const micInstance = mic({
@@ -43,10 +55,15 @@ function recordAudio(filename) {
 
     micInstance.start()
 
-    setTimeout(() => {
-        micInstance.stop()
-        resolve()
-    }, 2000)
+    micInputStream.on("data", (data) => {
+      const rms = calculateRMS(data)
+      if (rms < silenceThreshold) {
+        setTimeout(() => {
+          micInstance.stop()
+          resolve()
+        }, 2000)
+      }
+    })
 
     micInputStream.on("error", (err) => {
       reject(err)
