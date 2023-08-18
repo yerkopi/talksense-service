@@ -143,12 +143,27 @@ async function main() {
       }
     ]
 
+      let commandFound = false
       for (const command of knownCommands) {
         if (transcription.includes(command.name)) {
           command.cb(transcription)
+          commandFound = true
           break
         }
       }
+
+      const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
+      if (!commandFound) {
+        const url = googleTTS.getAudioUrl(response, {
+          lang: 'tr',
+          slow: false,
+          host: 'https://translate.google.com',
+        })
+
+        spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
+        console.log(response)
+      }
+
     } catch (err) {
       console.error(err)
     }
