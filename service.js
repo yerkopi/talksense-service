@@ -6,7 +6,7 @@ const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 const googleTTS = require("google-tts-api")
-const spawn = require("child_process").spawn
+const  {spawn, exec} = require("child_process")
 
 const audioFileName = "prompt.wav"
 
@@ -157,6 +157,7 @@ async function main() {
       }
 
       fs.unlinkSync(audioFileName)
+      exec("cp ./dummy.wav ./prompt.wav")
 
     } catch (err) {
       console.error(err)
