@@ -5,6 +5,9 @@ const dotenv = require('dotenv')
 const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
+const say = require('say')
+
+say.speak('Hello!')
 
 const audioFileName = "prompt.wav"
 
