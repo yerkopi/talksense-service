@@ -108,14 +108,14 @@ async function main() {
       const knownCommands = [{
         "name": "ışıkları kapat",
         "cb": (transcription) => {
-          const url = googleTTS.getAudioUrl('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?', {
+          const response = "Işıklar kapatılıyor."
+          const url = googleTTS.getAudioUrl(response, {
             lang: 'tr',
             slow: false,
             host: 'https://translate.google.com',
           })
 
-          const response = "Işıklar kapatılıyor!"
-          spawn('mpv', [url, '--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo', '--no-video', '--volume=100'], {})
+          spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
           console.log(response)
         }
       }
