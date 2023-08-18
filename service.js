@@ -46,10 +46,8 @@ function recordAudio(filename) {
 
     console.log("Listening...")
 
-    writable.pipe(output)
-
     micInstance.start()
-
+    
     micInputStream.on("data", (data) => {
       vad.processAudio(data, 16000).then(res => {
         switch (res) {
@@ -64,7 +62,8 @@ function recordAudio(filename) {
           case VAD.Event.VOICE:
             setTimeout(() => {
               micInstance.stop()
-              fs.unlinkSync(audioFileName)
+              fs.unlinkSync(filename)
+              writable.pipe(output)
               resolve()
             }, 2000)
             break;
