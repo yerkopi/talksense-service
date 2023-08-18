@@ -42,11 +42,14 @@ function recordAudio(filename) {
 
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
+    const writable = new Readable().wrap(micInputStream)
 
     console.log("Listening...")
 
+    writable.pipe(output)
+
     micInstance.start()
-    
+
     micInputStream.on("data", (data) => {
       vad.processAudio(data, 16000).then(res => {
         switch (res) {
@@ -59,10 +62,8 @@ function recordAudio(filename) {
           case VAD.Event.SILENCE:
             break;
           case VAD.Event.VOICE:
-            new Readable().wrap(micInputStream).pipe(output)
             setTimeout(() => {
               micInstance.stop()
-              fs.unlinkSync(filename)
               resolve()
             }, 2000)
             break;
@@ -154,6 +155,8 @@ async function main() {
         spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
+
+      fs.unlinkSync(audioFileName)
 
     } catch (err) {
       console.error(err)
