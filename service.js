@@ -42,6 +42,7 @@ function recordAudio(filename) {
 
     const fileSizeInBytes = fs.statSync(filename).size
     if (fileSizeInBytes > 1000000) {
+      fs.unlinkSync(filename)
       console.log("File size is too big, deleting...")
     }
 
