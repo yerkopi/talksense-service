@@ -7,8 +7,6 @@ const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 const say = require('say')
 
-say.speak('Hello!')
-
 const audioFileName = "prompt.wav"
 
 console.log("Running service.js...")
@@ -65,9 +63,11 @@ function recordAudio(filename) {
             if (listening) {
               setTimeout(() => {
                 listening = !listening
-                if (!listening)
+                if (!listening) {
+                  say.speak('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?')
                   micInstance.stop()
                   resolve()
+                }
               }, 1000)
             }
             return
