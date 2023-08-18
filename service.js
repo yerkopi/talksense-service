@@ -120,12 +120,12 @@ async function main() {
         }
       },
       {
-        "name": "fıkra anlat",
+        "name": "küfür et",
         "cb": async (transcription) => {
 
           const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: "Make a Turkish joke for me but should not be over 199 characters."}],
+            messages: [{role: "user", content: "You are simulating a conversation with a rude Turkish person. The following is a list of rude words that you can use in your conversation: amına koyduğum, orospu çocuğu."}],
           }).then((res) => {
 
             const response = res.data.choices[0].message.content
