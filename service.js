@@ -78,6 +78,26 @@ function recordAudio(filename) {
 }
 
 async function transcribeAudio(filename) {
+
+  // if file size greater than 500 kb
+  try {
+    const fileSize = fs.fileSizeSync(filename)
+  } catch {
+    fs.unlinkSync(audioFileName)
+    exec("cp ./dummy.wav ./prompt.wav")
+
+    const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
+
+    const url = googleTTS.getAudioUrl(response, {
+      lang: 'tr',
+      slow: false,
+      host: 'https://translate.google.com',
+    })
+
+    spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
+    return ""
+  }
+
   const transcript = await openai.createTranscription(
     fs.createReadStream(filename),
     "whisper-1"
