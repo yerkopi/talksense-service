@@ -11,3 +11,8 @@ TalkSense is a continuous speech monitoring and interpretation service that capt
 - **Interpretation**: TalkSense goes beyond mere transcription. It interprets the context and meaning behind the spoken words, offering a deeper understanding of the conversations.
 
 - **Router Service Integration**: The deciphered text is seamlessly sent to a router service for further processing. This allows you to route, store, analyze, or integrate the interpreted content as needed.
+
+# Dependencies
+```
+sudo apt-get install festival festvox-kallpc16k
+```
