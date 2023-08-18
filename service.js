@@ -85,19 +85,6 @@ async function transcribeAudio(filename) {
   return transcript.data.text
 }
 
-setInterval(() => {
-  try {
-    const fileSizeInBytes = fs.statSync(audioFileName).size
-    if (fileSizeInBytes > 1000000) {
-      fs.truncateSync(audioFileName, 0)
-      console.log("File size is too big, deleting...")
-    }
-  } catch (err) {
-    console.log(err)
-  }
-
-}, 10 * 1000) // 10 seconds
-
 async function main() {
   while (true) {
     try {
@@ -156,8 +143,9 @@ async function main() {
         }
       }
 
-      const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
       if (!commandFound) {
+        const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
+
         const url = googleTTS.getAudioUrl(response, {
           lang: 'tr',
           slow: false,
@@ -167,6 +155,8 @@ async function main() {
         spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
+
+      fs.unlinkSync(audioFileName)
 
     } catch (err) {
       console.error(err)
