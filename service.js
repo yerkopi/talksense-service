@@ -7,6 +7,8 @@ const { Configuration, OpenAIApi } = require("openai")
 
 console.log("Running service.js...")
 
+const silenceThreshold = 100
+
 const micInstance = mic({
     rate: '16000',
     channels: '1',
