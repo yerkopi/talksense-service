@@ -125,7 +125,7 @@ async function main() {
 
           const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: "Say me a Turkish song lyrics."}],
+            messages: [{role: "user", content: "Say me a Turkish song lyrics. Shouldnt be over 199 characters."}],
           }).then((res) => {
 
             const response = res.data.choices[0].message.content
