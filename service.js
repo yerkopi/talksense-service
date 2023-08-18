@@ -67,7 +67,12 @@ function recordAudio(filename) {
               setTimeout(() => {
                 listening = !listening
                 if (!listening) {
-                  googleTTS("Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?", "tr",1).then(url => mpvPlayer.load(url))
+                  const url = googleTTS.getAudioUrl('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?', {
+                    lang: 'tr',
+                    slow: false,
+                    host: 'https://translate.google.com',
+                  }).then(url => mpvPlayer.load(url))
+                  
                   micInstance.stop()
                   resolve()
                 }

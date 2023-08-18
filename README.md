@@ -14,5 +14,6 @@ TalkSense is a continuous speech monitoring and interpretation service that capt
 
 # Dependencies
 ```
-sudo apt-get install festival festvox-kallpc16k
+sudo apt install mpv -y
 ```
+
