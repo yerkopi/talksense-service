@@ -115,7 +115,7 @@ async function main() {
             host: 'https://translate.google.com',
           })
 
-          spawn("mpv", [url, "--audio-device=alsa/front:CARD=USBZH11SENC,DEV=0", "--volume=100"], {})
+          spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
           console.log(response)
         }
       },
@@ -137,7 +137,7 @@ async function main() {
               host: 'https://translate.google.com',
             })
   
-            spawn("mpv", [url, "--audio-device=alsa/front:CARD=USBZH11SENC,DEV=0", "--volume=100"], {})
+            spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
           }).catch(console.error)
         }
       }
@@ -160,7 +160,7 @@ async function main() {
           host: 'https://translate.google.com',
         })
 
-        spawn("mpv", [url, "--audio-device=alsa/front:CARD=USBZH11SENC,DEV=0", "--volume=100"], {})
+        spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
 
