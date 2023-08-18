@@ -40,6 +40,10 @@ function recordAudio(filename) {
       device: dotenv.config().parsed.MIC_DEVICE
     })
 
+    const fileSizeInBytes = fs.statSync(filename).size
+    if (fileSizeInBytes > 1000000)
+      fs.unlinkSync(filename)
+
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
     const writable = new Readable().wrap(micInputStream)
