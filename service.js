@@ -6,7 +6,7 @@ const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 const googleTTS = require("google-tts-api")
-const spawn = require("child_process").spawn
+const spawnSync = require("child_process").spawnSync
 
 const audioFileName = "prompt.wav"
 
@@ -130,14 +130,14 @@ async function main() {
 
             const response = res.data.choices[0].message.content
             console.log(response)
-            
+
             const url = googleTTS.getAudioUrl(response, {
               lang: 'tr',
               slow: false,
               host: 'https://translate.google.com',
             })
   
-            spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
+            spawnSync("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
           }).catch(console.error)
         }
       }
