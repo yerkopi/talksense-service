@@ -6,6 +6,8 @@ const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 
+const audioFileName = "prompt.wav"
+
 console.log("Running service.js...")
 
 const micInstance = mic({
@@ -91,8 +93,8 @@ async function transcribeAudio(filename) {
 async function main() {
   while (true) {
     try {
-      await recordAudio("prompt.wav")
-      transcription = await transcribeAudio(audioFilename)
+      await recordAudio(audioFileName)
+      transcription = await transcribeAudio(audioFileName)
       transcription = transcription.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
       transcription = transcription.replace(/[^a-zşçğüöı ]/g, "")
       transcription = transcription.toLowerCase()
