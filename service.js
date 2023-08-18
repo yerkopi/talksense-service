@@ -40,12 +40,6 @@ function recordAudio(filename) {
       device: dotenv.config().parsed.MIC_DEVICE
     })
 
-    const fileSizeInBytes = fs.statSync(filename).size
-    if (fileSizeInBytes > 1000000) {
-      fs.unlinkSync(filename)
-      console.log("File size is too big, deleting...")
-    }
-
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
     const writable = new Readable().wrap(micInputStream)
@@ -90,6 +84,19 @@ async function transcribeAudio(filename) {
   )
   return transcript.data.text
 }
+
+setInterval(() => {
+  try {
+    const fileSizeInBytes = fs.statSync(audioFileName).size
+    if (fileSizeInBytes > 1000000) {
+      fs.unlinkSync(audioFileName)
+      console.log("File size is too big, deleting...")
+    }
+  } catch (err) {
+    console.error(err)
+  }
+  
+}, 1000)
 
 async function main() {
   while (true) {
