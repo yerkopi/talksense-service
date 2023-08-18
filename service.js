@@ -129,6 +129,8 @@ async function main() {
           }).then((res) => {
 
             const response = res.data.choices[0].message.content
+            console.log(response)
+            
             const url = googleTTS.getAudioUrl(response, {
               lang: 'tr',
               slow: false,
@@ -136,8 +138,6 @@ async function main() {
             })
   
             spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
-
-            console.log(response)
           }).catch(console.error)
         }
       }
