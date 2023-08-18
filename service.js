@@ -64,9 +64,9 @@ function recordAudio(filename) {
           case VAD.Event.SILENCE:
             if (listening) {
               setTimeout(() => {
-                listening = !listening
                 if (!listening) {
                   micInstance.stop()
+                  listening = !listening
                   resolve()
                 }
               }, 1000)
