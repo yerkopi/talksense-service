@@ -65,7 +65,7 @@ function recordAudio(filename) {
             setTimeout(() => {
               micInstance.stop()
               resolve()
-            }, 1000)
+            }, 2000)
             break;
         }
       }).catch(console.error)
