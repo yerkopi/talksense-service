@@ -93,9 +93,9 @@ setInterval(() => {
       console.log("File size is too big, deleting...")
     }
   } catch (err) {
-    console.error(err)
+    console.log(err)
   }
-  
+
 }, 1000)
 
 async function main() {
