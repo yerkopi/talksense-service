@@ -42,7 +42,6 @@ function recordAudio(filename) {
 
     const micInputStream = micInstance.getAudioStream()
     const output = fs.createWriteStream(filename)
-    const writable = new Readable().wrap(micInputStream)
 
     console.log("Listening...")
 
@@ -60,7 +59,7 @@ function recordAudio(filename) {
           case VAD.Event.SILENCE:
             break;
           case VAD.Event.VOICE:
-            writable.pipe(output)
+            new Readable().wrap(micInputStream).pipe(output)
             setTimeout(() => {
               micInstance.stop()
               fs.unlinkSync(filename)
