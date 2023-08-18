@@ -5,7 +5,8 @@ const dotenv = require('dotenv')
 const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
-const say = require('say')
+const googleTTS = require("google-tts-api")
+let mpv = require('node-mpv')
 
 const audioFileName = "prompt.wav"
 
@@ -24,6 +25,8 @@ const micInputStream = micInstance.getAudioStream()
 const config = new Configuration({
   apiKey: dotenv.config().parsed.OPENAI_API_KEY
 })
+
+let mpvPlayer = new mpv()
 const openai = new OpenAIApi(config)
 const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
@@ -64,7 +67,7 @@ function recordAudio(filename) {
               setTimeout(() => {
                 listening = !listening
                 if (!listening) {
-                  say.speak('Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?')
+                  googleTTS("Merhaba, benim adım Yerkopi. Sana nasıl yardımcı olabilirim?", "tr",1).then(url => mpvPlayer.load(url))
                   micInstance.stop()
                   resolve()
                 }
