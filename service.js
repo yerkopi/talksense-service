@@ -6,7 +6,7 @@ const { Readable } = require("stream")
 const { Configuration, OpenAIApi } = require("openai")
 const VAD = require("node-vad")
 const googleTTS = require("google-tts-api")
-const  {spawn, exec} = require("child_process")
+const  {execSync} = require("child_process")
 
 const audioFileName = "prompt.wav"
 
@@ -106,7 +106,7 @@ async function main() {
             host: 'https://translate.google.com',
           })
 
-          spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
+          execSync("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
           console.log(response)
         }
       },
@@ -128,7 +128,7 @@ async function main() {
               host: 'https://translate.google.com',
             })
   
-            spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
+            execSync("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
           }).catch(console.error)
         }
       }
@@ -152,12 +152,12 @@ async function main() {
           host: 'https://translate.google.com',
         })
 
-        spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
+        execSync("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
 
       fs.unlinkSync(audioFileName)
-      exec("cp ./dummy.wav ./prompt.wav")
+      execSync("cp ./dummy.wav ./prompt.wav")
 
     } catch (err) {
       console.error(err)
