@@ -165,9 +165,4 @@ async function main() {
   }
 }
 
-setInterval(() => {
-  fs.unlinkSync(audioFileName)
-      exec("cp ./dummy.wav ./prompt.wav")
-}, 10000)
-
 main()
