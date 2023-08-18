@@ -160,7 +160,7 @@ async function main() {
           host: 'https://translate.google.com',
         })
 
-        spawn("mpv", [url, "--audio-device=pulse/alsa_output.usb-0600_USBZH11S-ENC-00.analog-stereo", "--volume=100"], {})
+        spawn("mpv", [url, "--audio-device=alsa/front:CARD=USBZH11SENC,DEV=0", "--volume=100"], {})
         console.log(response)
       }
 
