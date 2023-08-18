@@ -96,7 +96,7 @@ setInterval(() => {
     console.log(err)
   }
 
-}, 1000)
+}, 60 * 1000 * 10) // 10 minutes
 
 async function main() {
   while (true) {
