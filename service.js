@@ -41,7 +41,7 @@ async function flushFile() {
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
-  Delay(1000)
+  Delay(250)
 }
 
 function recordAudio(filename) {
@@ -97,6 +97,7 @@ function recordAudio(filename) {
 }
 
 async function transcribeAudio(filename) {
+  Delay(250)
   const transcript = await openai.createTranscription(
     fs.createReadStream(filename),
     "whisper-1"
