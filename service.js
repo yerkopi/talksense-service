@@ -47,6 +47,8 @@ async function flushFile() {
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
+
+  await Delay(1000)
 }
 
 function recordAudio(filename) {
