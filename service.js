@@ -96,7 +96,7 @@ function recordAudio(filename) {
 }
 
 async function transcribeAudio(filename) {
-  await Delay(1000)
+  await Delay(2000)
   const transcript = await openai.createTranscription(
     fs.createReadStream(filename),
     "whisper-1"
