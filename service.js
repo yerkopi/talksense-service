@@ -101,7 +101,9 @@ async function transcribeAudio(filename) {
   const transcript = await openai.createTranscription(
     fs.createReadStream(filename),
     "whisper-1"
-  )
+  ).catch((err) => {
+    console.error(err)
+  })
   return transcript.data.text
 }
 
