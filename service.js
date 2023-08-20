@@ -32,6 +32,7 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
 function flushFile() {
+  console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
 }
