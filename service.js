@@ -37,7 +37,13 @@ function Delay(ms) {
   })
 }
 
-function flushFile() {
+let transcribing = false
+
+async function flushFile() {
+  while (transcribing) {
+    await Delay(100)
+  }
+
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
@@ -96,6 +102,7 @@ function recordAudio(filename) {
 }
 
 async function transcribeAudio(filename) {
+  transcribing = true
   await Delay(2000)
   const transcript = await openai.createTranscription(
     fs.createReadStream(filename),
@@ -104,6 +111,7 @@ async function transcribeAudio(filename) {
     console.error(err)
     return {data: {text: ""}}
   })
+  transcribing = false
   return transcript.data.text
 }
 
