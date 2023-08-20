@@ -31,10 +31,17 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
+function Delay(ms) {
+  return new Promise((res) => {
+      setTimeout(res, ms)
+  })
+}
+
 async function flushFile() {
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
+  Delay(1000)
 }
 
 function recordAudio(filename) {
