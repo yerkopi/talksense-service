@@ -60,7 +60,7 @@ function recordAudio(filename) {
     micInstance.start()
 
     micInputStream.on("data", async (data) => {
-      vad.processAudio(data, 16000).then(res => {
+      await vad.processAudio(data, 16000).then(async (res) => {
         switch (res) {
           case VAD.Event.ERROR:
             console.log("ERROR")
