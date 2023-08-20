@@ -31,7 +31,15 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
+function flushFile() {
+  fs.unlinkSync(audioFileName)
+  exec("cp ./dummy.wav ./prompt.wav")
+}
+
 function recordAudio(filename) {
+
+  let lastVoiceDetectedTimestamp = new Date().getTime()
+
   return new Promise((resolve, reject) => {
     const micInstance = mic({
       rate: dotenv.config().parsed.MIC_RATE,
@@ -60,8 +68,11 @@ function recordAudio(filename) {
             console.log("NOISE")
             break;
           case VAD.Event.SILENCE:
+            if (new Date().getTime() - nowTimestamp > 5000)
+              flushFile()
             break;
           case VAD.Event.VOICE:
+            lastVoiceDetectedTimestamp = new Date().getTime()
             setTimeout(() => {
               micInstance.stop()
               resolve()
@@ -155,9 +166,6 @@ async function main() {
         spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
         console.log(response)
       }
-
-      fs.unlinkSync(audioFileName)
-      exec("cp ./dummy.wav ./prompt.wav")
 
     } catch (err) {
       console.error(err)
