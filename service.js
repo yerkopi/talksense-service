@@ -1,197 +1,202 @@
-const fs = require("fs")
-const ffmpeg = require("fluent-ffmpeg")
-const mic = require("mic")
-const dotenv = require('dotenv')
-const { Readable } = require("stream")
-const { Configuration, OpenAIApi } = require("openai")
-const VAD = require("node-vad")
-const googleTTS = require("google-tts-api")
-const  {spawn, exec} = require("child_process")
+const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
+const mic = require("mic");
+const dotenv = require('dotenv');
+const { Readable } = require("stream");
+const { Configuration, OpenAIApi } = require("openai");
+const VAD = require("node-vad");
+const googleTTS = require("google-tts-api");
+const { spawn } = require("child_process");
 
-const audioFileName = "prompt.wav"
+dotenv.config();
 
-console.log("Running service.js...")
+const audioFileName = "prompt.wav";
+const transcriptionDelay = 2000;
+const silenceThreshold = 5000;
+const maxTranscriptionLength = 199;
 
-const micInstance = mic({
-  rate: '16000',
-  channels: '1',
-  hw: '0,0',
-  device: 'hw:USBZH11SENC,0',
-  debug: true
-})
-
-const micInputStream = micInstance.getAudioStream()
+console.log("Running service.js...");
 
 const config = new Configuration({
-  apiKey: dotenv.config().parsed.OPENAI_API_KEY
-})
+  apiKey: process.env.OPENAI_API_KEY
+});
 
-const openai = new OpenAIApi(config)
-const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
+const openai = new OpenAIApi(config);
+const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE);
 
-ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
+ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 
-function Delay(ms) {
-  return new Promise((res) => {
-      setTimeout(res, ms)
-  })
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
-let transcribing = false
+let transcribing = false;
 
 async function flushFile() {
-  await Delay(5000)
+  await delay(silenceThreshold);
 
   while (transcribing) {
-    await Delay(100)
+    await delay(100);
   }
 
-  console.log("Flushing file...")
-  fs.unlinkSync(audioFileName)
-  exec("cp ./dummy.wav ./prompt.wav")
+  console.log("Flushing file...");
+  fs.unlinkSync(audioFileName);
+  fs.copyFileSync("./dummy.wav", "./prompt.wav");
 }
 
-function recordAudio(filename) {
-
-  let lastVoiceDetectedTimestamp = new Date().getTime()
+async function recordAudio(filename) {
+  let lastVoiceDetectedTimestamp = Date.now();
 
   return new Promise((resolve, reject) => {
     const micInstance = mic({
-      rate: dotenv.config().parsed.MIC_RATE,
-      channels: dotenv.config().parsed.MIC_CHANNELS,
+      rate: process.env.MIC_RATE,
+      channels: process.env.MIC_CHANNELS,
       fileType: "wav",
-      device: dotenv.config().parsed.MIC_DEVICE
-    })
+      device: process.env.MIC_DEVICE
+    });
 
-    const micInputStream = micInstance.getAudioStream()
-    const output = fs.createWriteStream(filename)
-    const writable = new Readable().wrap(micInputStream)
+    const micInputStream = micInstance.getAudioStream();
+    const output = fs.createWriteStream(filename);
+    const writable = new Readable().wrap(micInputStream);
 
-    console.log("Listening...")
+    console.log("Listening...");
 
-    writable.pipe(output)
+    writable.pipe(output);
 
-    micInstance.start()
+    micInstance.start();
 
     micInputStream.on("data", async (data) => {
       await vad.processAudio(data, 16000).then(async (res) => {
         switch (res) {
           case VAD.Event.ERROR:
-            console.log("ERROR")
+            console.log("ERROR");
             break;
           case VAD.Event.NOISE:
-            console.log("NOISE")
+            console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
-            if (new Date().getTime() - lastVoiceDetectedTimestamp > 5000)
-              await flushFile()
+            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold)
+              await flushFile();
             break;
           case VAD.Event.VOICE:
-            lastVoiceDetectedTimestamp = new Date().getTime()
+            lastVoiceDetectedTimestamp = Date.now();
             setTimeout(() => {
-              micInstance.stop()
-              resolve()
-            }, 2000)
+              micInstance.stop();
+              resolve();
+            }, 2000);
             break;
         }
-      }).catch(console.error)
-    })
+      }).catch(console.error);
+    });
 
     micInputStream.on("error", (err) => {
-      reject(err)
-    })
-  })
+      reject(err);
+    });
+  });
 }
 
 async function transcribeAudio(filename) {
-  transcribing = true
-  await Delay(2000)
-  const transcript = await openai.createTranscription(
-    fs.createReadStream(filename),
-    "whisper-1"
-  ).catch((err) => {
-    console.error(err)
-    return {data: {text: ""}}
-  })
-  transcribing = false
-  return transcript.data.text
+  transcribing = true;
+  await delay(transcriptionDelay);
+
+  try {
+    const transcript = await openai.createTranscription(
+      fs.createReadStream(filename),
+      "whisper-1"
+    );
+
+    return transcript.data.text;
+  } catch (err) {
+    console.error(err);
+    return "";
+  } finally {
+    transcribing = false;
+  }
 }
 
 async function main() {
   while (true) {
     try {
-      await recordAudio(audioFileName)
-      transcription = await transcribeAudio(audioFileName)
-      transcription = transcription.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-      transcription = transcription.replace(/[^a-zşçğüöı ]/g, "")
-      transcription = transcription.toLowerCase()
+      await recordAudio(audioFileName);
 
-      console.log(`Transcription: ${transcription}`)
+      let transcription = await transcribeAudio(audioFileName);
+      transcription = transcription.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+      transcription = transcription.replace(/[^a-zşçğüöı ]/g, "");
+      transcription = transcription.toLowerCase();
 
-      const knownCommands = [{
-        "name": "ışıkları kapat",
-        "cb": (transcription) => {
-          const response = "Işıklar kapatılıyor."
-          const url = googleTTS.getAudioUrl(response, {
-            lang: 'tr',
-            slow: false,
-            host: 'https://translate.google.com',
-          })
+      console.log(`Transcription: ${transcription}`);
 
-          spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
-          console.log(response)
-        }
-      },
-      {
-        "name": "bülbül gibi öt",
-        "cb": async (transcription) => {
-
-          const completion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: "Say me a Turkish song lyrics. Shouldnt be over 199 characters."}],
-          }).then((res) => {
-
-            const response = res.data.choices[0].message.content
-            console.log(response)
-            
+      const knownCommands = [
+        {
+          name: "ışıkları kapat",
+          cb: () => {
+            const response = "Işıklar kapatılıyor.";
             const url = googleTTS.getAudioUrl(response, {
               lang: 'tr',
               slow: false,
               host: 'https://translate.google.com',
-            })
-  
-            spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
-          }).catch(console.error)
-        }
-      }
-    ]
+            });
 
-      let commandFound = false
+            spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+            console.log(response);
+          }
+        },
+        {
+          name: "bülbül gibi öt",
+          cb: async () => {
+            const prompt = "Bana Türkçe bir şarkı sözü söyleyin. 199 karakteri geçmemeli.";
+            const completion = await openai.createChatCompletion({
+              model: "gpt-3.5-turbo",
+              messages: [{ role: "user", content: prompt }],
+            });
+
+            const response = completion.data.choices[0].message.content;
+
+            if (response.length <= maxTranscriptionLength) {
+              console.log(response);
+
+              const url = googleTTS.getAudioUrl(response, {
+                lang: 'tr',
+                slow: false,
+                host: 'https://translate.google.com',
+              });
+
+              spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+            } else {
+              console.log("Response too long for TTS.");
+            }
+          }
+        }
+      ];
+
+      let commandFound = false;
       for (const command of knownCommands) {
         if (transcription.includes(command.name)) {
-          command.cb(transcription)
-          commandFound = true
-          break
+          command.cb();
+          commandFound = true;
+          break;
         }
       }
 
       if (!commandFound) {
-        const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
+        const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?";
 
         const url = googleTTS.getAudioUrl(response, {
           lang: 'tr',
           slow: false,
           host: 'https://translate.google.com',
-        })
+        });
 
-        spawn("mpv", [url, `--audio-device=${dotenv.config().parsed.AUDIO_DEVICE}`, "--volume=100"], {})
-        console.log(response)
+        spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+        console.log(response);
       }
 
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
   }
 }
 
-main()
+main();
