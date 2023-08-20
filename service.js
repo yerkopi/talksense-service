@@ -68,7 +68,7 @@ function recordAudio(filename) {
             console.log("NOISE")
             break;
           case VAD.Event.SILENCE:
-            if (new Date().getTime() - nowTimestamp > 5000)
+            if (new Date().getTime() - lastVoiceDetectedTimestamp > 5000)
               flushFile()
             break;
           case VAD.Event.VOICE:
