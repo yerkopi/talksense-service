@@ -31,7 +31,7 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE)
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg")
 
-function flushFile() {
+async function flushFile() {
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
@@ -70,7 +70,7 @@ function recordAudio(filename) {
             break;
           case VAD.Event.SILENCE:
             if (new Date().getTime() - lastVoiceDetectedTimestamp > 5000)
-              flushFile()
+              await flushFile()
             break;
           case VAD.Event.VOICE:
             lastVoiceDetectedTimestamp = new Date().getTime()
