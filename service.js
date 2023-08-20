@@ -103,6 +103,7 @@ async function transcribeAudio(filename) {
     "whisper-1"
   ).catch((err) => {
     console.error(err)
+    return {data: {text: ""}}
   })
   return transcript.data.text
 }
