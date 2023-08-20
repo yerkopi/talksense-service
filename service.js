@@ -40,6 +40,8 @@ function Delay(ms) {
 let transcribing = false
 
 async function flushFile() {
+  await Delay(5000)
+
   while (transcribing) {
     await Delay(100)
   }
@@ -47,8 +49,6 @@ async function flushFile() {
   console.log("Flushing file...")
   fs.unlinkSync(audioFileName)
   exec("cp ./dummy.wav ./prompt.wav")
-
-  await Delay(1000)
 }
 
 function recordAudio(filename) {
