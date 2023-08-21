@@ -11,7 +11,7 @@ const { spawn } = require("child_process");
 dotenv.config();
 
 const audioFileName = "prompt.wav";
-const silenceThreshold = 5000;
+const maxFileSize = 1024 * 1024;
 const maxTranscriptionLength = 199;
 
 console.log("Running service.js...");
