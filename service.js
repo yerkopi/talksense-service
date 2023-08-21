@@ -29,6 +29,8 @@ async function flushFile() {
   console.log("Flushing file...");
   fs.unlinkSync(audioFileName);
   fs.copyFileSync("./dummy.wav", "./prompt.wav");
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 async function recordAudio(filename) {
@@ -62,10 +64,8 @@ async function recordAudio(filename) {
             console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
-            if (lastVoiceDetectedTimestamp != 0 && Date.now() - lastVoiceDetectedTimestamp > silenceThreshold) {
-              lastVoiceDetectedTimestamp = 0;
+            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold)
               await flushFile();
-            }
             break;
           case VAD.Event.VOICE:
             lastVoiceDetectedTimestamp = Date.now();
