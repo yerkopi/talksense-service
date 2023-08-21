@@ -38,8 +38,6 @@ async function flushFile() {
 }
 
 async function recordAudio(filename) {
-  let lastVoiceDetectedTimestamp = Date.now();
-
   return new Promise((resolve, reject) => {
     const micInstance = mic({
       rate: process.env.MIC_RATE,
@@ -68,11 +66,8 @@ async function recordAudio(filename) {
             console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
-            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold)
-              await flushFile();
             break;
           case VAD.Event.VOICE:
-            lastVoiceDetectedTimestamp = Date.now();
             setTimeout(async () => {
               await flushFile();
               await Delay(250);
