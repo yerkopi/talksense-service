@@ -143,7 +143,8 @@ class VoiceAssistant {
             const commandFound = this.voiceCommands.handle(transcription)
 
             if (!commandFound) {
-                Utils.performTTS("Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?", process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
+                const response = "Üzgünüm, çok fazla gürültü var. Lütfen tekrar söyler misiniz?"
+                Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
                 console.log(response)
             }
 
