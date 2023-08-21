@@ -85,7 +85,7 @@ class VoiceAssistant {
                 if (fileSize > 1000000)
                     await flushFile()
     
-                await vad.processAudio(data, 16000).then(async (res) => {
+                await this.vad.processAudio(data, 16000).then(async (res) => {
                     switch (res) {
                         case VAD.Event.ERROR:
                             console.log("ERROR")
