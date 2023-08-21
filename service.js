@@ -114,7 +114,7 @@ class VoiceAssistant {
     }
 
     async transcribeAudio() {
-        const transcript = await openai.createTranscription(
+        const transcript = await this.openai.createTranscription(
             fs.createReadStream(this.audioFileName),
             "whisper-1"
         )
