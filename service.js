@@ -60,7 +60,7 @@ class VoiceAssistant {
                     transcript = transcript.replace("merak ediyorum", "")
                     
                     const completion = await this.openai.createChatCompletion({
-                        model: "text-davinci-003",
+                        model: "gpt-3.5-turbo",
                         messages: [{ role: "user", content: transcript + ` reminder: your response should be in ${process.env.SPEECH_LANG} language and less then ${this.maxTranscriptionLength} characters and dont make any comment about this remindation.` }],
                     })
 
