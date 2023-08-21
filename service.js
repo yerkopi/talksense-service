@@ -66,12 +66,10 @@ async function recordAudio(filename) {
           case VAD.Event.SILENCE:
             break;
           case VAD.Event.VOICE:
-            writable.pipe(output);
             setTimeout(async () => {
               micInstance.stop();
               resolve();
             }, 2000);
-            writable.unpipe(output);
             break;
         }
       }).catch(console.error);
@@ -100,6 +98,9 @@ async function transcribeAudio(filename) {
 async function main() {
   while (true) {
     try {
+
+      await flushFile();
+
       await recordAudio(audioFileName);
 
       let transcription = await transcribeAudio(audioFileName);
@@ -173,6 +174,8 @@ async function main() {
         spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
         console.log(response);
       }
+
+      await Delay(5000);
 
     } catch (err) {
       console.error(err);
