@@ -56,6 +56,11 @@ async function recordAudio(filename) {
     micInstance.start();
 
     micInputStream.on("data", async (data) => {
+
+      let fileSize = fs.statSync(filename).size;
+      if (fileSize > 1000000) 
+        await flushFile();
+
       await vad.processAudio(data, 16000).then(async (res) => {
         switch (res) {
           case VAD.Event.ERROR:
@@ -101,7 +106,6 @@ async function transcribeAudio(filename) {
 async function main() {
   while (true) {
     try {
-
       await flushFile();
 
       await recordAudio(audioFileName);
