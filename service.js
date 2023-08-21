@@ -11,7 +11,6 @@ const { spawn } = require("child_process");
 dotenv.config();
 
 const audioFileName = "prompt.wav";
-const transcriptionDelay = 2000;
 const silenceThreshold = 5000;
 const maxTranscriptionLength = 199;
 
@@ -32,15 +31,7 @@ function delay(ms) {
   });
 }
 
-let transcribing = false;
-
 async function flushFile() {
-  await delay(silenceThreshold);
-
-  while (transcribing) {
-    await delay(100);
-  }
-
   console.log("Flushing file...");
   fs.unlinkSync(audioFileName);
   fs.copyFileSync("./dummy.wav", "./prompt.wav");
@@ -77,8 +68,10 @@ async function recordAudio(filename) {
             console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
-            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold)
+            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold){
               await flushFile();
+              await Delay(1000);
+            }
             break;
           case VAD.Event.VOICE:
             lastVoiceDetectedTimestamp = Date.now();
@@ -98,9 +91,6 @@ async function recordAudio(filename) {
 }
 
 async function transcribeAudio(filename) {
-  transcribing = true;
-  await delay(transcriptionDelay);
-
   try {
     const transcript = await openai.createTranscription(
       fs.createReadStream(filename),
@@ -111,8 +101,6 @@ async function transcribeAudio(filename) {
   } catch (err) {
     console.error(err);
     return "";
-  } finally {
-    transcribing = false;
   }
 }
 
