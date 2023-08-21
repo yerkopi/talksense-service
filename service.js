@@ -52,8 +52,6 @@ async function recordAudio(filename) {
 
     console.log("Listening...");
 
-    writable.pipe(output);
-
     micInstance.start();
 
     micInputStream.on("data", async (data) => {
@@ -68,12 +66,12 @@ async function recordAudio(filename) {
           case VAD.Event.SILENCE:
             break;
           case VAD.Event.VOICE:
+            writable.pipe(output);
             setTimeout(async () => {
-              await flushFile();
-              await Delay(250);
               micInstance.stop();
               resolve();
             }, 2000);
+            writable.unpipe(output);
             break;
         }
       }).catch(console.error);
