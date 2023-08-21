@@ -61,7 +61,7 @@ class VoiceAssistant {
                     
                     const completion = await this.openai.createChatCompletion({
                         model: "gpt-3.5-turbo",
-                        messages: [{ role: "user", content: transcript + ` reminder: your response should be less then ${this.maxTranscriptionLength} characters and dont make any comment about this remindation.` }],
+                        messages: [{ role: "user", content: transcript + ` reminder: your response should be in ${env.SPEECH_LANG} language and less then ${this.maxTranscriptionLength} characters and dont make any comment about this remindation.` }],
                     })
 
                     const response = completion.data.choices[0].message.content
