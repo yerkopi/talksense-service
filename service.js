@@ -54,6 +54,24 @@ class VoiceAssistant {
                     }
                 },
             },
+            {
+                name: "merak ediyorum",
+                cb: async (transcript) => {
+                    const completion = await this.openai.createChatCompletion({
+                        model: "gpt-3.5-turbo",
+                        messages: [{ role: "user", content: transcript }],
+                    })
+
+                    const response = completion.data.choices[0].message.content
+
+                    if (response.length <= this.maxTranscriptionLength) {
+                        console.log(response)
+                        Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
+                    } else {
+                        console.log("Response too long for TTS.")
+                    }
+                },
+            }
         ]
 
         this.voiceCommands = new VoiceCommands(this.knownCommands)

@@ -14,7 +14,7 @@ class VoiceCommands {
     handle(transcription) {
         for (const command of this.knownCommands) {
             if (transcription.includes(command.name)) {
-                command.cb()
+                command.cb(transcription)
                 return true
             }
         }
