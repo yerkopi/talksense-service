@@ -6,6 +6,7 @@ source "$DIR/../.env"
 
 git config --global --add safe.directory "$SERVICE_DIR"
 
+sudo apt install nodejs npm -y --no-install-recommends --no-install-suggests
 sudo apt install mpv -y --no-install-recommends --no-install-suggests
 
 sudo systemctl disable "$SERVICE_NAME"
