@@ -127,7 +127,7 @@ class VoiceAssistant {
                             setTimeout(async () => {
                                 micInstance.stop()
                                 resolve()
-                            }, 2000)
+                            }, 5000)
                             break
                     }
                 }).catch(console.error)
