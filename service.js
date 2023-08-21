@@ -103,6 +103,16 @@ async function transcribeAudio(filename) {
   }
 }
 
+function tts(text) {
+  const url = googleTTS.getAudioUrl(text, {
+    lang: process.env.SPEECH_LANG,
+    slow: false,
+    host: 'https://translate.google.com',
+  });
+
+  spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+}
+
 async function main() {
   while (true) {
     try {
@@ -121,14 +131,7 @@ async function main() {
         {
           name: "ışıkları kapat",
           cb: () => {
-            const response = "Işıklar kapatılıyor.";
-            const url = googleTTS.getAudioUrl(response, {
-              lang: 'tr',
-              slow: false,
-              host: 'https://translate.google.com',
-            });
-
-            spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+            tts("Tamam, ışıkları kapatıyorum.");
             console.log(response);
           }
         },
@@ -145,14 +148,7 @@ async function main() {
 
             if (response.length <= maxTranscriptionLength) {
               console.log(response);
-
-              const url = googleTTS.getAudioUrl(response, {
-                lang: 'tr',
-                slow: false,
-                host: 'https://translate.google.com',
-              });
-
-              spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+              tts(response);
             } else {
               console.log("Response too long for TTS.");
             }
@@ -170,15 +166,7 @@ async function main() {
       }
 
       if (!commandFound) {
-        const response = "Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?";
-
-        const url = googleTTS.getAudioUrl(response, {
-          lang: 'tr',
-          slow: false,
-          host: 'https://translate.google.com',
-        });
-
-        spawn("mpv", [url, `--audio-device=${process.env.AUDIO_DEVICE}`, "--volume=100"], {});
+        tts("Özür dilerim, çok fazla gürültü var. Lütfen tekrar söyler misiniz?");
         console.log(response);
       }
 
