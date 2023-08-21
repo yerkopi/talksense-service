@@ -75,6 +75,7 @@ async function recordAudio(filename) {
             lastVoiceDetectedTimestamp = Date.now();
             setTimeout(async () => {
               await flushFile();
+              await Delay(250);
               micInstance.stop();
               resolve();
             }, 2000);
