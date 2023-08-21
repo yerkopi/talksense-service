@@ -52,6 +52,8 @@ async function recordAudio(filename) {
 
     console.log("Listening...");
 
+    writable.pipe(output);
+    
     micInstance.start();
 
     micInputStream.on("data", async (data) => {
