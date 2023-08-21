@@ -64,8 +64,10 @@ async function recordAudio(filename) {
             console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
+            console.log("SILENCE");
             break;
           case VAD.Event.VOICE:
+            console.log("VOICE detected");
             setTimeout(async () => {
               micInstance.stop();
               resolve();
