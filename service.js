@@ -53,10 +53,20 @@ async function recordAudio(filename) {
     console.log("Listening...");
 
     writable.pipe(output);
-    
+
+    let fileSize = 0;
+
     micInstance.start();
 
     micInputStream.on("data", async (data) => {
+      fileSize += data.length;
+
+      if (fileSize > maxFileSize) {
+        micInstance.stop();
+        reject(new Error("File size exceeded."));
+        return;
+      }
+
       await vad.processAudio(data, 16000).then(async (res) => {
         switch (res) {
           case VAD.Event.ERROR:
@@ -77,6 +87,8 @@ async function recordAudio(filename) {
             break;
         }
       }).catch(console.error);
+
+      writable.pipe(output)
     });
 
     micInputStream.on("error", (err) => {
