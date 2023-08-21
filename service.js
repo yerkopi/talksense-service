@@ -29,6 +29,27 @@ class VoiceAssistant {
 
         this.knownCommands = [
             {
+                name: "arkupi",
+                cb: async (transcript) => {
+                    transcript = transcript.replace("arkupi", "")
+                    
+                    const completion = await this.openai.createChatCompletion({
+                        model: "gpt-3.5-turbo",
+                        messages: [{ role: "user", content: transcript + ` reminder: your response should be in ${process.env.SPEECH_LANG} language and less then ${this.maxTranscriptionLength} characters and dont make any comment about this remindation.` }],
+                    })
+
+                    const response = completion.data.choices[0].message.content
+                    console.log(response)
+
+                    if (response.length <= this.maxTranscriptionLength) {
+                        console.log(response)
+                        Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
+                    } else {
+                        console.log("Response too long for TTS.")
+                    }
+                },
+            },
+            {
                 name: "ışıkları kapat",
                 cb: (response = "Tamam, ışıkları kapatıyorum.") => {
                     Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
@@ -45,27 +66,6 @@ class VoiceAssistant {
                     })
 
                     const response = completion.data.choices[0].message.content
-
-                    if (response.length <= this.maxTranscriptionLength) {
-                        console.log(response)
-                        Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
-                    } else {
-                        console.log("Response too long for TTS.")
-                    }
-                },
-            },
-            {
-                name: "arkupi",
-                cb: async (transcript) => {
-                    transcript = transcript.replace("arkupi", "")
-                    
-                    const completion = await this.openai.createChatCompletion({
-                        model: "gpt-3.5-turbo",
-                        messages: [{ role: "user", content: transcript + ` reminder: your response should be in ${process.env.SPEECH_LANG} language and less then ${this.maxTranscriptionLength} characters and dont make any comment about this remindation.` }],
-                    })
-
-                    const response = completion.data.choices[0].message.content
-                    console.log(response)
 
                     if (response.length <= this.maxTranscriptionLength) {
                         console.log(response)
