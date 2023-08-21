@@ -29,9 +29,9 @@ class VoiceAssistant {
 
         this.knownCommands = [
             {
-                name: "arkupi",
+                name: "asistan",
                 cb: async (transcript) => {
-                    transcript = transcript.replace("arkupi", "")
+                    transcript = transcript.replace("asistan", "")
                     
                     const completion = await this.openai.createChatCompletion({
                         model: "gpt-3.5-turbo",
