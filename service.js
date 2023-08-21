@@ -25,12 +25,16 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE);
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 
+function Delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function flushFile() {
   console.log("Flushing file...");
   fs.unlinkSync(audioFileName);
   fs.copyFileSync("./dummy.wav", "./prompt.wav");
-
-  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 async function recordAudio(filename) {
@@ -69,7 +73,8 @@ async function recordAudio(filename) {
             break;
           case VAD.Event.VOICE:
             lastVoiceDetectedTimestamp = Date.now();
-            setTimeout(() => {
+            setTimeout(async () => {
+              await flushFile();
               micInstance.stop();
               resolve();
             }, 2000);
