@@ -70,7 +70,7 @@ class VoiceAssistant {
             })
     
             const micInputStream = micInstance.getAudioStream()
-            const output = fs.createWriteStream(filename)
+            const output = fs.createWriteStream(this.audioFileName)
             const writable = new Readable().wrap(micInputStream)
     
             console.log("Listening...")
@@ -81,7 +81,7 @@ class VoiceAssistant {
     
             micInputStream.on("data", async (data) => {
     
-                let fileSize = fs.statSync(filename).size
+                let fileSize = fs.statSync(this.audioFileName).size
                 if (fileSize > 1000000)
                     await flushFile()
     
@@ -115,7 +115,7 @@ class VoiceAssistant {
 
     async transcribeAudio() {
         const transcript = await openai.createTranscription(
-            fs.createReadStream(filename),
+            fs.createReadStream(this.audioFileName),
             "whisper-1"
         )
       
