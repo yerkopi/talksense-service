@@ -25,7 +25,7 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE);
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 
-function delay(ms) {
+function Delay(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
