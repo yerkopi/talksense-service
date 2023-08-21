@@ -55,9 +55,9 @@ class VoiceAssistant {
                 },
             },
             {
-                name: "merak ediyorum",
+                name: "arkupi",
                 cb: async (transcript) => {
-                    transcript = transcript.replace("merak ediyorum", "")
+                    transcript = transcript.replace("arkupi", "")
                     
                     const completion = await this.openai.createChatCompletion({
                         model: "gpt-3.5-turbo",
