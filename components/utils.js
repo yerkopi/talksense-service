@@ -1,3 +1,14 @@
+/**
+ * @class Utils
+ * @description Utility functions
+ * @exports Utils
+ * @static {Function} delay - Delays the execution of the program for a given amount of time
+ * @static {Function} performTTS - Performs text-to-speech using Google Translate
+ * @example Utils.delay(1000) // Delays the execution of the program for 1 second
+ * @example Utils.performTTS("Hello world", "en", "alsa_output.pci-0000_00_1f.3.analog-stereo") // Performs text-to-speech using Google Translate
+ * @exports Utils
+ */
+
 const googleTTS = require("google-tts-api")
 const { spawn } = require("child_process")
 

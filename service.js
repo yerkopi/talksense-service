@@ -1,3 +1,8 @@
+/**
+ * @fileoverview This file is the main entry point of the talksense-service.
+ * It is responsible for recording audio, transcribing it, and handling the commands.
+ */
+
 const Utils = require("./components/utils")
 const VoiceCommands = require("./components/voiceCommands")
 
