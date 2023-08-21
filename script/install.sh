@@ -6,6 +6,8 @@ source "$DIR/../.env"
 
 git config --global --add safe.directory "$SERVICE_DIR"
 
+sudo apt install mpv -y --no-install-recommends --no-install-suggests
+
 sudo systemctl disable "$SERVICE_NAME"
 sudo systemctl stop "$SERVICE_NAME"
 
