@@ -109,7 +109,7 @@ class VoiceAssistant {
     
                 let fileSize = fs.statSync(this.audioFileName).size
                 if (fileSize > 1000000)
-                    await flushFile()
+                    await this.flushFile()
     
                 await this.vad.processAudio(data, 16000).then(async (res) => {
                     switch (res) {
