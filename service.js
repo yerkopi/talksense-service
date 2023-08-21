@@ -57,7 +57,6 @@ class VoiceAssistant {
             {
                 name: "merak ediyorum",
                 cb: async (transcript) => {
-                    console.log(transcript)
                     transcript = transcript.replace("merak ediyorum", "")
                     
                     const completion = await this.openai.createChatCompletion({
@@ -66,7 +65,8 @@ class VoiceAssistant {
                     })
 
                     const response = completion.data.choices[0].message.content
-
+                    console.log(response)
+                    
                     if (response.length <= this.maxTranscriptionLength) {
                         console.log(response)
                         Utils.performTTS(response, process.env.SPEECH_LANG, process.env.AUDIO_DEVICE)
