@@ -130,8 +130,8 @@ async function main() {
 
         const knownCommands = [{
                 name: "ışıkları kapat",
-                cb: () => {
-                    tts("Tamam, ışıkları kapatıyorum.");
+                cb: (response = "Tamam, ışıkları kapatıyorum.") => {
+                    tts(response);
                     console.log(response);
                 }
             },
