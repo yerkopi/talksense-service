@@ -1,5 +1,5 @@
-const Utils = require("./utils")
-const VoiceCommands = require("./voiceCommands")
+const Utils = require("./components/utils")
+const VoiceCommands = require("./components/voiceCommands")
 
 const fs = require("fs")
 const mic = require("mic")
