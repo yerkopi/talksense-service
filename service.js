@@ -25,12 +25,6 @@ const vad = new VAD(VAD.Mode.VERY_AGGRESSIVE);
 
 ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 
-function Delay(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 async function flushFile() {
   console.log("Flushing file...");
   fs.unlinkSync(audioFileName);
@@ -68,9 +62,9 @@ async function recordAudio(filename) {
             console.log("NOISE");
             break;
           case VAD.Event.SILENCE:
-            if (Date.now() - lastVoiceDetectedTimestamp > silenceThreshold){
+            if (lastVoiceDetectedTimestamp != 0 && Date.now() - lastVoiceDetectedTimestamp > silenceThreshold) {
+              lastVoiceDetectedTimestamp = 0;
               await flushFile();
-              await Delay(1000);
             }
             break;
           case VAD.Event.VOICE:
