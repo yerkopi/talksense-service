@@ -17,6 +17,7 @@ dotenv.config()
 
 class VoiceAssistant {
     constructor() {
+        this.listening = false
         this.audioFileName = "prompt.wav"
         this.maxTranscriptionLength = 199
 
@@ -120,14 +121,17 @@ class VoiceAssistant {
                             console.log("NOISE")
                             break
                         case VAD.Event.SILENCE:
+                            this.listening = false
                             console.log("SILENCE")
+                            setTimeout(async () => {
+                                if (!this.listening) {
+                                    micInstance.stop()
+                                    resolve()
+                                }
+                            }, 1000)
                             break
                         case VAD.Event.VOICE:
-                            console.log("VOICE detected")
-                            setTimeout(async () => {
-                                micInstance.stop()
-                                resolve()
-                            }, 5000)
+                            this.listening = true
                             break
                     }
                 }).catch(console.error)
