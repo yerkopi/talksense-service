@@ -17,3 +17,5 @@ TalkSense is a continuous speech monitoring and interpretation service that capt
 sudo apt install mpv -y
 ```
 
+# I'm using talksense with my JBL GO 2 for now. This documentation would be nice for same case:
+https://forums.raspberrypi.com/viewtopic.php?t=235519
